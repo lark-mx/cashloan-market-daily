@@ -1,0 +1,13 @@
+---
+interface Props { score: number; label?: string; size?: number; }
+const { score, label = '综合风险', size = 128 } = Astro.props;
+const color = score >= 80 ? '#ff496a' : score >= 65 ? '#ff8a3d' : score >= 45 ? '#f1c75b' : '#40d69b';
+const r = 48; const c = 2 * Math.PI * r; const dash = c * score / 100;
+---
+<div class="risk-gauge" style={`--gauge:${color};width:${size}px;height:${size}px`}>
+  <svg viewBox="0 0 120 120" aria-label={`${label} ${score}`}>
+    <circle cx="60" cy="60" r={r} class="gauge-track" />
+    <circle cx="60" cy="60" r={r} class="gauge-value" style={`stroke-dasharray:${dash} ${c-dash}`} />
+  </svg>
+  <div><strong>{score}</strong><span>{label}</span></div>
+</div>

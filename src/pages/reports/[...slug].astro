@@ -1,0 +1,23 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import RiskGauge from '../../components/RiskGauge.astro';
+import RiskRadar from '../../components/RiskRadar.astro';
+import TrendChart from '../../components/TrendChart.astro';
+import { getCollection, render } from 'astro:content';
+export async function getStaticPaths(){return (await getCollection('reports')).map(report=>({params:{slug:report.id},props:{report}}));}
+const { report }=Astro.props; const { Content }=await render(report); const d=report.data; const base=import.meta.env.BASE_URL;
+const riskText=d.riskScore>=80?'极高':d.riskScore>=65?'高':d.riskScore>=45?'中':'低';
+---
+<BaseLayout title={`${d.countryName}现金贷市场日报｜${d.date.toISOString().slice(0,10)}`} description={d.summary}>
+  <div class="page-shell report-page">
+    <a class="back-link" href={base}>← 返回全球市场总览</a>
+    <section class="report-hero">
+      <div class="report-title"><span class="country-flag">{d.flag}</span><div><span class="kicker"><i></i> {d.country.toUpperCase()} MARKET BRIEF</span><h1>{d.countryName}现金贷市场<br/>风险与机会日报</h1><p>{d.summary}</p><div class="hero-meta"><span>{d.date.toISOString().slice(0,10)}</span><span>公开信息研究</span><span>置信度 {d.confidence}%</span></div></div></div>
+      <div class="report-score"><RiskGauge score={d.riskScore} label="综合风险" size={158}/><div><span>风险等级</span><b>{riskText}</b></div><div><span>机会指数</span><b>{d.opportunityScore}</b></div></div>
+    </section>
+    <section class="metric-strip">{d.metrics.map(m=><article><span>{m.label}</span><strong>{m.value}<small>{m.unit}</small></strong>{m.change&&<em class={m.direction}>{m.change}</em>}</article>)}</section>
+    <section class="analysis-grid"><RiskRadar risks={d.risks}/>{d.chart?<TrendChart {...d.chart}/>:<article class="signal-panel"><div class="panel-heading"><div><span class="eyebrow">ACTION SIGNALS</span><h3>行动信号</h3></div></div><div class="action-signals">{d.signals.map((s,i)=><div><span>0{i+1}</span><p>{s}</p></div>)}</div></article>}</section>
+    {d.chart&&<section class="standalone-signals"><span class="eyebrow">ACTION SIGNALS</span>{d.signals.map((s,i)=><article><b>0{i+1}</b><p>{s}</p></article>)}</section>}
+    <article class="report-content"><div class="content-label">FULL ANALYSIS</div><Content /></article>
+  </div>
+</BaseLayout>

@@ -1,0 +1,19 @@
+---
+interface Props { risks: Record<string, number>; }
+const { risks } = Astro.props;
+const labels: Record<string,string>={credit:'信用风险',regulatory:'合规风险',macro:'宏观风险',fraud:'欺诈风险',competition:'竞争强度',funding:'资金成本'};
+const entries=Object.entries(risks);
+const w=380,h=340,cx=190,cy=170,r=120,n=entries.length;
+const point=(i:number,value:number)=>{const a=-Math.PI/2+i*2*Math.PI/n, rr=r*value/100;return `${cx+Math.cos(a)*rr},${cy+Math.sin(a)*rr}`};
+const grid=[25,50,75,100].map(level=>entries.map((_,i)=>point(i,level)).join(' '));
+const polygon=entries.map(([_,v],i)=>point(i,v)).join(' ');
+---
+<section class="radar-panel">
+  <div class="panel-heading"><div><span class="eyebrow">RISK MAP</span><h3>风险雷达</h3></div></div>
+  <svg viewBox={`0 0 ${w} ${h}`} class="radar" role="img" aria-label="风险雷达图">
+    {grid.map(points=><polygon points={points} class="radar-grid"/>)}
+    {entries.map((_,i)=>{const [x,y]=point(i,100).split(',');return <line x1={cx} y1={cy} x2={x} y2={y} class="radar-grid"/>})}
+    <polygon points={polygon} class="radar-value"/>
+    {entries.map(([key,value],i)=>{const [x,y]=point(i,118).split(',').map(Number);return <text x={x} y={y} text-anchor={x<cx-10?'end':x>cx+10?'start':'middle'} dominant-baseline="middle">{labels[key]} {value}</text>})}
+  </svg>
+</section>

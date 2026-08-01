@@ -1,49 +1,58 @@
-# 日报页面组件规范
+# Astro 日报内容规范
 
-正文继续使用 Markdown；可视化使用仓库内置的原生 Web Components，不依赖外部 CDN。
+每个国家每日创建一个文件：
 
-## 风险卡片
-
-在“今日摘要”之后插入：
-
-```html
-<risk-cards data-items="信用风险|高|high|逾期率上升,合规风险|中|medium|监管规则待落地,市场机会|谨慎乐观|low|钱包信贷需求增长"></risk-cards>
+```text
+src/content/reports/<country>/YYYY-MM-DD.md
 ```
 
-每项格式：`名称|展示值|等级|备注`，项目之间用英文逗号分隔。等级只能为：
+正文使用 Markdown；风险卡片、雷达图、指标卡和趋势图由 Astro 根据 frontmatter 自动渲染，日报任务不要手写 HTML 或 JavaScript。
 
-- `low`
-- `medium`
-- `high`
-- `critical`
+## Frontmatter 模板
 
-属性值中不要使用英文逗号或竖线。
-
-## 趋势图
-
-仅当有至少 2 个同口径、可验证的数据点时插入：
-
-```html
-<trend-chart
-  data-title="近月通胀趋势"
-  data-labels="3月,4月,5月,6月"
-  data-values="3.7,2.8,1.5,1.9"
-  data-unit="%"
-  data-color="#3f51b5"
-  data-source="国家统计局月度 CPI">
-</trend-chart>
+```yaml
+---
+country: argentina
+countryName: '阿根廷'
+flag: '🇦🇷'
+date: 2026-08-01
+riskScore: 84
+opportunityScore: 55
+confidence: 78
+headline: '一句话市场结论'
+summary: '两到三句摘要'
+risks:
+  credit: 92
+  regulatory: 68
+  macro: 76
+  fraud: 58
+  competition: 81
+  funding: 74
+metrics:
+  - label: '年通胀'
+    value: '33.5'
+    unit: '%'
+    change: '持续回落'
+    direction: down
+signals:
+  - '立即执行的业务动作或重点监控事项。'
+chart:
+  title: '家庭贷款违约率变化'
+  labels: ['2023-12', '2026-06']
+  values: [2.8, 13.0]
+  unit: '%'
+  source: '来源名称'
+---
 ```
 
-要求：
+## 约束
 
-- `data-labels` 与 `data-values` 数量一致。
-- 数值必须来自报告所引用的可靠来源。
-- 不得为了画图补造历史数据。
-- 数据不足时省略图表，正文明确说明。
-- 每篇报告最多 2 张趋势图，优先选择汇率、通胀、政策利率、逾期率等业务相关指标。
-
-## 安全限制
-
-- 不插入未经审查的第三方脚本、iframe 或远程 HTML。
-- 不把搜索结果原始 HTML 直接嵌入页面。
-- 不在属性中写 Token、Cookie 或其他秘密。
+- `riskScore`、`opportunityScore`、`confidence` 和六个风险维度均为 0–100。
+- 风险分数必须根据当日证据审慎判断，不得制造虚假精度；同一评分方法跨日保持一致。
+- `metrics` 推荐 4 项，数值无法验证时不填。
+- `direction` 只能是 `up`、`down`、`flat`。
+- `signals` 推荐 3 项，必须是可执行判断。
+- `chart` 可选，只能使用至少两个同口径、来源可靠的数据点。数据不足时完全省略 chart。
+- 正文按“重点动态 / 今日判断 / 信息说明”组织，不使用 Markdown 表格。
+- 来源必须包含可访问链接，不编造数据、机构、时间和 URL。
+- 禁止远程脚本、iframe、原始第三方 HTML、Token、Cookie 和其他秘密。

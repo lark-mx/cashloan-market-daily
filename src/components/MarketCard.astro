@@ -1,0 +1,15 @@
+---
+import RiskGauge from './RiskGauge.astro';
+const { report } = Astro.props;
+const d=report.data;
+const base=import.meta.env.BASE_URL;
+const riskLabel=d.riskScore>=80?'极高风险':d.riskScore>=65?'高风险':d.riskScore>=45?'中等风险':'低风险';
+---
+<a class="market-card" href={`${base}reports/${report.id}/`}>
+  <div class="market-card-top"><span class="flag">{d.flag}</span><span class="risk-pill" data-risk={riskLabel}>{riskLabel}</span></div>
+  <div class="market-card-main">
+    <div><span class="eyebrow">{d.country.toUpperCase()}</span><h2>{d.countryName}</h2><p>{d.headline}</p></div>
+    <RiskGauge score={d.riskScore} label="风险" size={104}/>
+  </div>
+  <div class="market-card-foot"><span>机会指数 <b>{d.opportunityScore}</b></span><span>数据置信度 <b>{d.confidence}%</b></span><span>查看完整报告 →</span></div>
+</a>

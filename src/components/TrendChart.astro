@@ -1,0 +1,22 @@
+---
+interface Props { title: string; labels: string[]; values: number[]; unit?: string; source?: string; color?: string; }
+const { title, labels, values, unit = '', source, color = '#58a6ff' } = Astro.props;
+const width=720, height=260, pad={t:24,r:20,b:44,l:54};
+const min=Math.min(...values), max=Math.max(...values), range=max-min||1;
+const x=(i:number)=>pad.l+i*((width-pad.l-pad.r)/(values.length-1));
+const y=(v:number)=>pad.t+(max-v)*((height-pad.t-pad.b)/range);
+const points=values.map((v,i)=>`${x(i)},${y(v)}`).join(' ');
+const ticks=[0,.25,.5,.75,1].map(p=>max-p*range);
+---
+<section class="chart-panel">
+  <div class="panel-heading"><div><span class="eyebrow">TREND</span><h3>{title}</h3></div><span class="live-dot">已核验数据</span></div>
+  <div class="chart-scroll"><svg viewBox={`0 0 ${width} ${height}`} role="img" aria-label={title}>
+    <defs><linearGradient id={`fill-${title.replace(/\W/g,'')}`} x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color={color} stop-opacity=".28"/><stop offset="1" stop-color={color} stop-opacity="0"/></linearGradient></defs>
+    {ticks.map(t=><><line x1={pad.l} y1={y(t)} x2={width-pad.r} y2={y(t)} class="grid-line"/><text x={pad.l-10} y={y(t)+4} text-anchor="end">{t.toFixed(1)}{unit}</text></>)}
+    <polygon points={`${pad.l},${height-pad.b} ${points} ${width-pad.r},${height-pad.b}`} fill={`url(#fill-${title.replace(/\W/g,'')})`}/>
+    <polyline points={points} fill="none" stroke={color} stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    {values.map((v,i)=><circle cx={x(i)} cy={y(v)} r="4" fill={color}><title>{labels[i]}: {v}{unit}</title></circle>)}
+    {labels.map((l,i)=><text x={x(i)} y={height-15} text-anchor="middle">{l}</text>)}
+  </svg></div>
+  {source && <p class="source">来源：{source}</p>}
+</section>

@@ -45,6 +45,8 @@ chart:
 ---
 ```
 
+允许的 `country`：`argentina`、`colombia`、`peru`、`vietnam`、`mexico`、`guatemala`、`dominican-republic`、`kenya`。
+
 ## 约束
 
 - `riskScore`、`opportunityScore`、`confidence` 和六个风险维度均为 0–100。

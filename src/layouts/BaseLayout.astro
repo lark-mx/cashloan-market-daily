@@ -1,8 +1,14 @@
 ---
 import '../styles/global.css';
+import { markets } from '../data/markets';
 interface Props { title?: string; description?: string; }
-const { title = '全球现金贷市场情报中心', description = '拉美与东南亚消费金融风险、监管和市场机会情报' } = Astro.props;
+const { title = '全球现金贷市场情报中心', description = '拉美、东南亚与非洲消费金融风险、监管和市场机会情报' } = Astro.props;
 const root = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+const groups = [
+  { name: '拉丁美洲', items: markets.filter(m => m.region === 'latin-america') },
+  { name: '东南亚', items: markets.filter(m => m.region === 'southeast-asia') },
+  { name: '非洲', items: markets.filter(m => m.region === 'africa') }
+];
 ---
 <!doctype html>
 <html lang="zh-CN">
@@ -24,12 +30,10 @@ const root = import.meta.env.BASE_URL.replace(/\/?$/, '/');
       <span class="brand-mark">MI</span>
       <span><b>Market Intelligence</b><small>全球现金贷市场情报</small></span>
     </a>
-    <nav>
-      <a href={root}>总览</a>
-      <a href={`${root}markets/argentina/`}>阿根廷</a>
-      <a href={`${root}markets/colombia/`}>哥伦比亚</a>
-      <a href={`${root}markets/peru/`}>秘鲁</a>
-      <a href={`${root}markets/vietnam/`}>越南</a>
+    <button class="nav-toggle" aria-label="打开市场导航" aria-expanded="false" data-nav-toggle>市场 ▾</button>
+    <nav class="market-nav" data-market-nav>
+      <a class="nav-overview" href={root}>全球总览</a>
+      {groups.map(group => <details><summary>{group.name}</summary><div>{group.items.map(m => <a href={`${root}markets/${m.id}/`}>{m.name}</a>)}</div></details>)}
     </nav>
     <button class="theme-toggle" aria-label="切换主题" data-theme-toggle>◐</button>
   </header>
@@ -44,6 +48,18 @@ const root = import.meta.env.BASE_URL.replace(/\/?$/, '/');
       const light = document.documentElement.dataset.theme === 'light';
       document.documentElement.dataset.theme = light ? '' : 'light';
       localStorage.setItem('theme', light ? 'dark' : 'light');
+    });
+    const navToggle = document.querySelector('[data-nav-toggle]');
+    const marketNav = document.querySelector('[data-market-nav]');
+    navToggle?.addEventListener('click', () => {
+      const open = marketNav?.classList.toggle('is-open');
+      navToggle.setAttribute('aria-expanded', String(Boolean(open)));
+    });
+    document.addEventListener('click', event => {
+      if (!marketNav?.contains(event.target) && !navToggle?.contains(event.target)) {
+        marketNav?.classList.remove('is-open');
+        navToggle?.setAttribute('aria-expanded', 'false');
+      }
     });
   </script>
 </body>

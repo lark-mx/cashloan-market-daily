@@ -1,6 +1,6 @@
 # Cashloan Market Intelligence
 
-阿根廷、哥伦比亚、秘鲁、越南现金贷与消费金融市场风险和机会情报看板。
+阿根廷、哥伦比亚、秘鲁、越南、墨西哥、危地马拉、多米尼加、肯尼亚现金贷与消费金融市场风险和机会情报看板。
 
 站点：https://lark-mx.github.io/cashloan-market-daily/
 

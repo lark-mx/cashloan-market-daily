@@ -4,7 +4,10 @@ import { glob } from 'astro/loaders';
 const reports = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/reports' }),
   schema: z.object({
-    country: z.enum(['argentina', 'colombia', 'peru', 'vietnam']),
+    country: z.enum([
+      'argentina', 'colombia', 'peru', 'vietnam',
+      'mexico', 'guatemala', 'dominican-republic', 'kenya'
+    ]),
     countryName: z.string(),
     flag: z.string(),
     date: z.coerce.date(),

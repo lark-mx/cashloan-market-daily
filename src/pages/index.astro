@@ -3,6 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import MarketCard from '../components/MarketCard.astro';
 import TrendChart from '../components/TrendChart.astro';
 import { getCollection } from 'astro:content';
+import { marketRegion, regionLabels } from '../data/markets';
 const all=await getCollection('reports');
 const latestByCountry=new Map();
 for(const report of all.sort((a,b)=>b.data.date.getTime()-a.data.date.getTime())) if(!latestByCountry.has(report.data.country)) latestByCountry.set(report.data.country,report);
@@ -11,19 +12,32 @@ const root=import.meta.env.BASE_URL.replace(/\/?$/, '/');
 const latest=reports[0]?.data.date;
 const avg=Math.round(reports.reduce((s,r)=>s+r.data.riskScore,0)/(reports.length||1));
 const high=reports.filter(r=>r.data.riskScore>=65).length;
-const macroChart={title:'四国宏观风险对比',labels:reports.map(r=>r.data.countryName),values:reports.map(r=>r.data.risks.macro),unit:'',source:'每日报告综合研判'};
+const topRisks=reports.slice(0,6);
+const macroChart={title:'高风险市场宏观风险对比',labels:topRisks.map(r=>r.data.countryName),values:topRisks.map(r=>r.data.risks.macro),unit:'',source:'每日报告综合研判'};
 ---
 <BaseLayout>
   <div class="page-shell dashboard">
-    <section class="hero">
-      <div><span class="kicker"><i></i> DAILY MARKET BRIEFING</span><h1>全球现金贷<br/><em>市场情报中心</em></h1><p>聚焦拉美与东南亚消费金融市场，追踪监管、信用、宏观、欺诈和竞争信号。</p><div class="hero-meta"><span>最近更新 {latest?.toISOString().slice(0,10)}</span><span>覆盖 {reports.length} 个市场</span><span>每日 09:00 发布</span></div></div>
+    <section class="hero compact-hero">
+      <div><span class="kicker"><i></i> DAILY MARKET BRIEFING</span><h1>全球现金贷<br/><em>市场情报中心</em></h1><p>聚焦拉丁美洲、东南亚与非洲消费金融市场，追踪监管、信用、宏观、欺诈和竞争信号。</p><div class="hero-meta"><span>最近更新 {latest?.toISOString().slice(0,10)}</span><span>覆盖 {reports.length} 个市场</span><span>每日 09:00 发布</span></div></div>
       <div class="hero-score"><span>GLOBAL RISK</span><strong>{avg}</strong><small>/ 100</small><div class="score-bar"><i style={`width:${avg}%`}></i></div><p>{high} 个市场处于高风险区间</p></div>
     </section>
-    <section class="section-head"><div><span class="eyebrow">MARKET PULSE</span><h2>市场风险脉搏</h2></div><p>按综合风险评分排序，点击进入国家情报页</p></section>
-    <section class="market-grid">{reports.map(report=><MarketCard report={report}/>)}</section>
+    <section class="section-head market-section-head"><div><span class="eyebrow">MARKET PULSE</span><h2>市场风险脉搏</h2></div><p>按综合风险评分排序，可按区域筛选</p></section>
+    <div class="region-filters" role="group" aria-label="市场区域筛选">
+      {Object.entries(regionLabels).map(([id,label],i)=><button class:list={{active:i===0}} data-region-filter={id}>{label}</button>)}
+    </div>
+    <section class="market-grid" data-market-grid>{reports.map(report=><div class="market-card-wrap" data-region={marketRegion(report.data.country)}><MarketCard report={report}/></div>)}</section>
     <section class="insight-grid">
       <TrendChart {...macroChart}/>
-      <article class="signal-panel"><div class="panel-heading"><div><span class="eyebrow">KEY SIGNALS</span><h3>今日核心信号</h3></div><span class="signal-count">{reports.reduce((n,r)=>n+r.data.signals.length,0)}</span></div><div class="signal-list">{reports.flatMap(r=>r.data.signals.slice(0,2).map((s: string)=>({s,r}))).map(({s,r})=><a href={`${root}reports/${r.id}/`}><span>{r.data.flag}</span><div><b>{r.data.countryName}</b><p>{s}</p></div><i>↗</i></a>)}</div></article>
+      <article class="signal-panel"><div class="panel-heading"><div><span class="eyebrow">KEY SIGNALS</span><h3>高风险市场行动信号</h3></div><span class="signal-count">{Math.min(8,reports.reduce((n,r)=>n+r.data.signals.length,0))}</span></div><div class="signal-list">{reports.flatMap(r=>r.data.signals.slice(0,1).map((s: string)=>({s,r}))).slice(0,8).map(({s,r})=><a href={`${root}reports/${r.id}/`}><span>{r.data.flag}</span><div><b>{r.data.countryName}</b><p>{s}</p></div><i>↗</i></a>)}</div></article>
     </section>
   </div>
+  <script is:inline>
+    const filters = [...document.querySelectorAll('[data-region-filter]')];
+    const cards = [...document.querySelectorAll('[data-region]')];
+    filters.forEach(button => button.addEventListener('click', () => {
+      const region = button.dataset.regionFilter;
+      filters.forEach(item => item.classList.toggle('active', item === button));
+      cards.forEach(card => card.hidden = region !== 'all' && card.dataset.region !== region);
+    }));
+  </script>
 </BaseLayout>

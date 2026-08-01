@@ -1,0 +1,50 @@
+site_name: 全球现金贷市场风险与机会日报
+site_description: 阿根廷、哥伦比亚、秘鲁、越南现金贷与消费金融市场情报
+site_url: https://lark-mx.github.io/cashloan-market-daily/
+repo_url: https://github.com/lark-mx/cashloan-market-daily
+repo_name: lark-mx/cashloan-market-daily
+docs_dir: docs
+site_dir: site
+theme:
+  name: material
+  language: zh
+  features:
+    - navigation.tabs
+    - navigation.indexes
+    - navigation.top
+    - search.suggest
+    - search.highlight
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: blue
+      toggle:
+        icon: material/brightness-7
+        name: 切换至深色模式
+    - scheme: slate
+      primary: indigo
+      accent: blue
+      toggle:
+        icon: material/brightness-4
+        name: 切换至浅色模式
+plugins:
+  - search:
+      lang:
+        - zh
+        - en
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - pymdownx.details
+  - pymdownx.superfences
+  - toc:
+      permalink: true
+extra_css:
+  - assets/extra.css
+nav:
+  - 首页: index.md
+  - 阿根廷: reports/argentina/index.md
+  - 哥伦比亚: reports/colombia/index.md
+  - 秘鲁: reports/peru/index.md
+  - 越南: reports/vietnam/index.md

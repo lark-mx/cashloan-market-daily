@@ -42,6 +42,8 @@ markdown_extensions:
       permalink: true
 extra_css:
   - assets/extra.css
+extra_javascript:
+  - assets/report-components.js
 nav:
   - 首页: index.md
   - 阿根廷: reports/argentina/index.md

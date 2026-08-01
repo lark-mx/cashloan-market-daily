@@ -2,3 +2,22 @@ body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC"
 .md-typeset h1 { font-weight: 750; }
 .md-typeset h2 { border-bottom: 1px solid var(--md-default-fg-color--lightest); padding-bottom: .35rem; }
 .md-typeset a { word-break: break-word; }
+
+risk-cards, trend-chart { display: block; margin: 1.2rem 0; }
+.risk-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: .8rem; }
+.risk-card { border: 1px solid var(--md-default-fg-color--lightest); border-left: 5px solid #607d8b; border-radius: .55rem; padding: .9rem; background: var(--md-code-bg-color); box-shadow: 0 3px 12px rgba(0,0,0,.05); }
+.risk-card__label { color: var(--md-default-fg-color--light); font-size: .78rem; }
+.risk-card__value { font-size: 1.2rem; font-weight: 750; margin: .18rem 0; }
+.risk-card__note { font-size: .72rem; line-height: 1.45; color: var(--md-default-fg-color--light); }
+.risk-low { border-left-color: #2e7d32; }
+.risk-medium { border-left-color: #f9a825; }
+.risk-high { border-left-color: #ef6c00; }
+.risk-critical { border-left-color: #c62828; }
+.trend-chart { border: 1px solid var(--md-default-fg-color--lightest); border-radius: .55rem; padding: 1rem; background: var(--md-code-bg-color); }
+.trend-chart__title { font-weight: 700; margin-bottom: .5rem; }
+.trend-chart__scroll { overflow-x: auto; }
+.trend-chart svg { min-width: 620px; width: 100%; height: auto; }
+.chart-grid { stroke: currentColor; opacity: .12; stroke-width: 1; }
+.chart-axis { fill: currentColor; opacity: .68; font-size: 12px; }
+.trend-chart__source { color: var(--md-default-fg-color--light); font-size: .68rem; margin-top: .35rem; }
+.chart-error { color: var(--md-default-fg-color--light); }

@@ -7,6 +7,13 @@
 - 🇵🇪 [秘鲁](reports/peru/index.md)
 - 🇻🇳 [越南](reports/vietnam/index.md)
 
+## 最新日报 2026-08-01
+
+- 🇦🇷 [阿根廷](reports/argentina/2026-08-01.md)
+- 🇨🇴 [哥伦比亚](reports/colombia/2026-08-01.md)
+- 🇵🇪 [秘鲁](reports/peru/2026-08-01.md)
+- 🇻🇳 [越南](reports/vietnam/2026-08-01.md)
+
 ## 重点关注
 
 监管政策、宏观经济、汇率与利率、居民偿债能力、本地竞品、资金端、欺诈黑产、催收与消费者保护。

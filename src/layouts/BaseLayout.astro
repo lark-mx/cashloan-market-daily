@@ -2,7 +2,7 @@
 import '../styles/global.css';
 interface Props { title?: string; description?: string; }
 const { title = '全球现金贷市场情报中心', description = '拉美与东南亚消费金融风险、监管和市场机会情报' } = Astro.props;
-const base = import.meta.env.BASE_URL;
+const root = import.meta.env.BASE_URL.replace(/\/?$/, '/');
 ---
 <!doctype html>
 <html lang="zh-CN">
@@ -20,16 +20,16 @@ const base = import.meta.env.BASE_URL;
 <body>
   <div class="ambient ambient-a"></div><div class="ambient ambient-b"></div>
   <header class="topbar">
-    <a class="brand" href={base}>
+    <a class="brand" href={root}>
       <span class="brand-mark">MI</span>
       <span><b>Market Intelligence</b><small>全球现金贷市场情报</small></span>
     </a>
     <nav>
-      <a href={base}>总览</a>
-      <a href={`${base}markets/argentina/`}>阿根廷</a>
-      <a href={`${base}markets/colombia/`}>哥伦比亚</a>
-      <a href={`${base}markets/peru/`}>秘鲁</a>
-      <a href={`${base}markets/vietnam/`}>越南</a>
+      <a href={root}>总览</a>
+      <a href={`${root}markets/argentina/`}>阿根廷</a>
+      <a href={`${root}markets/colombia/`}>哥伦比亚</a>
+      <a href={`${root}markets/peru/`}>秘鲁</a>
+      <a href={`${root}markets/vietnam/`}>越南</a>
     </nav>
     <button class="theme-toggle" aria-label="切换主题" data-theme-toggle>◐</button>
   </header>

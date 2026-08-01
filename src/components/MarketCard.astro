@@ -2,10 +2,10 @@
 import RiskGauge from './RiskGauge.astro';
 const { report } = Astro.props;
 const d=report.data;
-const base=import.meta.env.BASE_URL;
+const root=import.meta.env.BASE_URL.replace(/\/?$/, '/');
 const riskLabel=d.riskScore>=80?'极高风险':d.riskScore>=65?'高风险':d.riskScore>=45?'中等风险':'低风险';
 ---
-<a class="market-card" href={`${base}reports/${report.id}/`}>
+<a class="market-card" href={`${root}reports/${report.id}/`}>
   <div class="market-card-top"><span class="flag">{d.flag}</span><span class="risk-pill" data-risk={riskLabel}>{riskLabel}</span></div>
   <div class="market-card-main">
     <div><span class="eyebrow">{d.country.toUpperCase()}</span><h2>{d.countryName}</h2><p>{d.headline}</p></div>

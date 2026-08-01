@@ -7,6 +7,7 @@ const all=await getCollection('reports');
 const latestByCountry=new Map();
 for(const report of all.sort((a,b)=>b.data.date.getTime()-a.data.date.getTime())) if(!latestByCountry.has(report.data.country)) latestByCountry.set(report.data.country,report);
 const reports=[...latestByCountry.values()].sort((a,b)=>b.data.riskScore-a.data.riskScore);
+const root=import.meta.env.BASE_URL.replace(/\/?$/, '/');
 const latest=reports[0]?.data.date;
 const avg=Math.round(reports.reduce((s,r)=>s+r.data.riskScore,0)/(reports.length||1));
 const high=reports.filter(r=>r.data.riskScore>=65).length;
@@ -22,7 +23,7 @@ const macroChart={title:'四国宏观风险对比',labels:reports.map(r=>r.data.
     <section class="market-grid">{reports.map(report=><MarketCard report={report}/>)}</section>
     <section class="insight-grid">
       <TrendChart {...macroChart}/>
-      <article class="signal-panel"><div class="panel-heading"><div><span class="eyebrow">KEY SIGNALS</span><h3>今日核心信号</h3></div><span class="signal-count">{reports.reduce((n,r)=>n+r.data.signals.length,0)}</span></div><div class="signal-list">{reports.flatMap(r=>r.data.signals.slice(0,2).map((s: string)=>({s,r}))).map(({s,r})=><a href={`${import.meta.env.BASE_URL}reports/${r.id}/`}><span>{r.data.flag}</span><div><b>{r.data.countryName}</b><p>{s}</p></div><i>↗</i></a>)}</div></article>
+      <article class="signal-panel"><div class="panel-heading"><div><span class="eyebrow">KEY SIGNALS</span><h3>今日核心信号</h3></div><span class="signal-count">{reports.reduce((n,r)=>n+r.data.signals.length,0)}</span></div><div class="signal-list">{reports.flatMap(r=>r.data.signals.slice(0,2).map((s: string)=>({s,r}))).map(({s,r})=><a href={`${root}reports/${r.id}/`}><span>{r.data.flag}</span><div><b>{r.data.countryName}</b><p>{s}</p></div><i>↗</i></a>)}</div></article>
     </section>
   </div>
 </BaseLayout>

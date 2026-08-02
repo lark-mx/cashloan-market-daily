@@ -2,8 +2,8 @@ import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
-  site: 'https://lark-mx.github.io',
-  base: '/cashloan-market-daily',
+  site: 'https://report.king-data.tech',
+  // base: '/cashloan-market-daily', // 自定义域名不需要 base 前缀
   output: 'static',
   integrations: [sitemap()],
   markdown: {

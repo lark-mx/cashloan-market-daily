@@ -6,7 +6,9 @@ const reports = defineCollection({
   schema: z.object({
     country: z.enum([
       'argentina', 'colombia', 'peru', 'vietnam',
-      'mexico', 'guatemala', 'dominican-republic', 'kenya'
+      'mexico', 'guatemala', 'dominican-republic', 'kenya',
+      'india', 'indonesia', 'bangladesh',
+      'nigeria', 'uganda', 'ghana', 'tanzania'
     ]),
     countryName: z.string(),
     flag: z.string(),

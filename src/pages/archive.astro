@@ -1,0 +1,100 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import { markets, regionLabels } from '../data/markets';
+
+const all = await getCollection('reports');
+
+// 按国家分组，组内按日期倒序
+const byCountry = new Map<string, typeof all>();
+for (const report of all) {
+  const key = report.data.country;
+  if (!byCountry.has(key)) byCountry.set(key, []);
+  byCountry.get(key)!.push(report);
+}
+for (const list of byCountry.values()) {
+  list.sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+}
+
+// 按 markets.ts 顺序 + 区域分组，保证遗漏的市场也算（下面只用已有报告的市场）
+const ordered = markets
+  .map(m => ({ market: m, reports: byCountry.get(m.id) || [] }))
+  .filter(x => x.reports.length > 0);
+
+const totalReports = all.length;
+const totalMarkets = ordered.length;
+
+const byRegion = new Map<string, typeof ordered>();
+for (const item of ordered) {
+  const r = item.market.region;
+  if (!byRegion.has(r)) byRegion.set(r, []);
+  byRegion.get(r)!.push(item);
+}
+
+const regionOrder = ['latin-america', 'southeast-asia', 'africa', 'south-asia'];
+const root = import.meta.env.BASE_URL.replace(/\/?$/, '/');
+
+const fmt = (d: Date) => {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+};
+---
+<BaseLayout title="历史日报归档｜全球现金贷市场情报中心" description="按国家与日期归档的全球现金贷市场历史日报">
+  <div class="page-shell archive-index">
+    <a class="back-link" href={root}>← 返回全球市场总览</a>
+
+    <section class="archive-hero">
+      <span>🗂️</span>
+      <div>
+        <span class="eyebrow">REPORT ARCHIVE</span>
+        <h1>历史日报归档</h1>
+        <p>覆盖 {totalMarkets} 个市场 · 共 {totalReports} 期日报，按国家与日期归档。</p>
+      </div>
+    </section>
+
+    {
+      regionOrder.map(region => {
+        const items = byRegion.get(region);
+        if (!items || items.length === 0) return null;
+        return (
+          <section class="archive-region">
+            <div class="section-head">
+              <div><span class="eyebrow">{region.toUpperCase()}</span><h2>{regionLabels[region]}</h2></div>
+              <p>{items.length} 个市场</p>
+            </div>
+            <div class="archive-country-grid">
+              {items.map(({ market, reports }) => (
+                <article class="archive-country">
+                  <div class="archive-country-head">
+                    <a href={`${root}markets/${market.id}/`}>
+                      <span class="country-flag">{reports[0]?.data.flag}</span>
+                      <div>
+                        <b>{market.name}</b>
+                        <small>{reports.length} 期</small>
+                      </div>
+                    </a>
+                  </div>
+                  <ol class="archive-date-list">
+                    {reports.map(r => (
+                      <li>
+                        <a href={`${root}reports/${r.id}/`}>
+                          <span class="archive-date">{fmt(r.data.date)}</span>
+                          <span class="archive-risk" data-risk={r.data.riskScore >= 80 ? 'extreme' : r.data.riskScore >= 65 ? 'high' : r.data.riskScore >= 45 ? 'mid' : 'low'}>
+                            {r.data.riskScore}
+                          </span>
+                          <span class="archive-headline">{r.data.headline}</span>
+                        </a>
+                      </li>
+                    ))}
+                  </ol>
+                </article>
+              ))}
+            </div>
+          </section>
+        );
+      })
+    }
+  </div>
+</BaseLayout>

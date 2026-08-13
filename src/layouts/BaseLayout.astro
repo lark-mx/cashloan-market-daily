@@ -33,6 +33,7 @@ const groups = [
     <button class="nav-toggle" aria-label="打开市场导航" aria-expanded="false" data-nav-toggle>市场 ▾</button>
     <nav class="market-nav" data-market-nav>
       <a class="nav-overview" href={root}>全球总览</a>
+      <a class="nav-overview" href={`${root}archive/`}>历史归档</a>
       {groups.map(group => <details><summary>{group.name}</summary><div>{group.items.map(m => <a href={`${root}markets/${m.id}/`}>{m.name}</a>)}</div></details>)}
     </nav>
     <button class="theme-toggle" aria-label="切换主题" data-theme-toggle>◐</button>
